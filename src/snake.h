@@ -53,8 +53,6 @@ public:
 
     void move_snake();
 
-
-
 };
 
 #endif

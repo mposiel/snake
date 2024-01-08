@@ -12,7 +12,7 @@ CSnake::CSnake(CRect r, char _c /*=''*/) :
     dir = RIGHT;
     food = CPoint(geom.topleft.x + 5, geom.topleft.y + 5);
     err_counter = 1;
-    speed = 10;
+    speed = 20;
 }
 
 
@@ -38,6 +38,7 @@ bool CSnake::handleEvent(int c) {
             return true;
         if (c == 'h') {
             state = HELP;
+            return true;
         } else if (c == 'p') {
             state = PLAY;
             snake.clear();
@@ -47,43 +48,64 @@ bool CSnake::handleEvent(int c) {
             snake.push_front(CPoint(geom.topleft.x + 4, geom.topleft.y + 1));
             dir = RIGHT;
             food = CPoint(geom.topleft.x + 5, geom.topleft.y + 5);
+            speed = 20;
+
+            return true;
         }
     } else if (state == PLAY) {
         if (c == 'p') {
             state = PAUSE;
+            return true;
         } else if (c == KEY_UP) {
             if (dir != DOWN) {
                 dir = UP;
                 move_snake();
                 paint_game();
             }
+            return true;
         } else if (c == KEY_DOWN) {
             if (dir != UP) {
                 dir = DOWN;
                 move_snake();
                 paint_game();
             }
+            return true;
         } else if (c == KEY_LEFT) {
             if (dir != RIGHT) {
                 dir = LEFT;
                 move_snake();
                 paint_game();
             }
+            return true;
         } else if (c == KEY_RIGHT) {
             if (dir != LEFT) {
                 dir = RIGHT;
                 move_snake();
                 paint_game();
             }
+            return true;
         } else if (c == ERR) {
             if (err_counter % speed == 0) {
                 move_snake();
                 err_counter = 1;
 
-                speed = 10 - length / 3;
+                if (length > 5 && length < 8) {
+                    speed = 18;
+                } else if (length >= 8 && length < 12) {
+                    speed = 16;
+                } else if (length >= 12 && length < 16) {
+                    speed = 12;
+                } else if (length >= 16 && length < 20) {
+                    speed = 8;
+                } else if (length >= 20) {
+                    speed = 6;
+                }
             } else {
                 err_counter++;
             }
+
+
+            return true;
         }
 
 
@@ -99,6 +121,9 @@ bool CSnake::handleEvent(int c) {
             snake.push_front(CPoint(geom.topleft.x + 4, geom.topleft.y + 1));
             dir = RIGHT;
             food = CPoint(geom.topleft.x + 5, geom.topleft.y + 5);
+            speed = 20;
+
+            return true;
         } else if (c == 'h') {
             state = HELP;
             snake.clear();
@@ -108,28 +133,25 @@ bool CSnake::handleEvent(int c) {
             snake.push_front(CPoint(geom.topleft.x + 4, geom.topleft.y + 1));
             dir = RIGHT;
             food = CPoint(geom.topleft.x + 5, geom.topleft.y + 5);
+            speed = 20;
+            return true;
         }
     } else if (state == HELP) {
         if (CFramedWindow::handleEvent(c))
             return true;
         if (c == 'b') {
             state = HOME;
+            return true;
         }
     } else if (state == PAUSE) {
         if (CFramedWindow::handleEvent(c))
             return true;
         if (c == 'p') {
             state = PLAY;
-            snake.clear();
-            length = 3;
-            snake.push_front(CPoint(geom.topleft.x + 2, geom.topleft.y + 1));
-            snake.push_front(CPoint(geom.topleft.x + 3, geom.topleft.y + 1));
-            snake.push_front(CPoint(geom.topleft.x + 4, geom.topleft.y + 1));
-            dir = RIGHT;
-            food = CPoint(geom.topleft.x + 5, geom.topleft.y + 5);
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 void CSnake::clear_screen() {
@@ -190,6 +212,7 @@ void CSnake::move_snake() {
         printl("*");
     }
 
+    //move snake
     if (dir == UP) {
         snake.push_front(CPoint(snake.begin()->x, snake.begin()->y - 1));
         snake.pop_back();
@@ -272,6 +295,7 @@ void CSnake::paint_help() {
 void CSnake::paint_game() {
     CFramedWindow::paint();
 
+    //print score
     gotoyx(geom.topleft.y - 1, geom.topleft.x);
     printl("Score: %d", length);
 
@@ -291,11 +315,3 @@ void CSnake::paint_game() {
         }
     }
 }
-
-
-
-
-
-
-
-
